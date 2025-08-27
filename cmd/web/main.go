@@ -8,11 +8,13 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"snippetbox.ashutosh.net/internal/models"
 )
 
 type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
+	snippets *models.SnippetModel
 }
 
 func main() {
@@ -35,6 +37,7 @@ func main() {
 	app := &application{
 		errorLog: errLog,
 		infoLog:  infoLog,
+		snippets: &models.SnippetModel{Db: db},
 	}
 
 	srv := &http.Server{
@@ -49,11 +52,11 @@ func main() {
 	errLog.Fatal(err)
 }
 
-func openDB(dsn string ) (*sql.DB, error){
-	db , err := sql.Open("mysql" , dsn)
+func openDB(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("mysql", dsn)
 
 	if err != nil {
-		return nil , err
+		return nil, err
 	}
-	return db , nil
+	return db, nil
 }
