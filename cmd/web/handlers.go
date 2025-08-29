@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-
 	"snippetbox.ashutosh.net/internal/models"
 )
 
@@ -14,15 +13,17 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
+
 	snippets, err := app.snippets.Latest()
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	// Use the new render helper.
-	app.render(w, http.StatusOK, "home.tmpl.html", &templateData{
-		Snippets: snippets,
-	})
+
+	data := app.newTemplateData(r)
+	data.Snippets = snippets
+
+	app.render(w, http.StatusOK, "home.tmpl.html", data)
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
@@ -40,10 +41,11 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	data := app.newTemplateData(r)
+	data.Snippet = snippet
+	app.render(w, http.StatusOK, "view.html", data)
 	// Use the new render helper.
-	app.render(w, http.StatusOK, "view.html", &templateData{
-		Snippet: snippet,
-	})
+
 }
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
