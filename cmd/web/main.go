@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 	"time" // New import
-
+	"crypto/tls"
 	"github.com/alexedwards/scs/mysqlstore" // New import
 	"github.com/alexedwards/scs/v2"         // New import
 	"github.com/go-playground/form/v4"
@@ -25,6 +25,8 @@ type application struct {
 	formDecoder    *form.Decoder
 	sessionManager *scs.SessionManager
 }
+
+
 
 func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
@@ -59,10 +61,16 @@ func main() {
 		sessionManager: sessionManager,
 	}
 
+	tlsConfig := &tls.Config{
+		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
+	}
+
 	srv := &http.Server{
 		Addr:     *addr,
 		ErrorLog: errorLog,
+		IdleTimeout: time.Minute,
 		Handler:  app.routes(),
+		TLSConfig: tlsConfig,
 	}
 
 	infoLog.Printf("Starting server on %s", *addr)
