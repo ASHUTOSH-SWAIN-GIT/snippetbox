@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"database/sql"
 	"flag"
 	"html/template"
@@ -8,7 +9,7 @@ import (
 	"net/http"
 	"os"
 	"time" // New import
-	"crypto/tls"
+
 	"github.com/alexedwards/scs/mysqlstore" // New import
 	"github.com/alexedwards/scs/v2"         // New import
 	"github.com/go-playground/form/v4"
@@ -24,9 +25,8 @@ type application struct {
 	templateCache  map[string]*template.Template
 	formDecoder    *form.Decoder
 	sessionManager *scs.SessionManager
+	users          *models.UserModel
 }
-
-
 
 func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
@@ -59,6 +59,7 @@ func main() {
 		templateCache:  templateCache,
 		formDecoder:    formDecoder,
 		sessionManager: sessionManager,
+		users: &models.UserModel{DB:db},
 	}
 
 	tlsConfig := &tls.Config{
@@ -66,11 +67,11 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Addr:     *addr,
-		ErrorLog: errorLog,
+		Addr:        *addr,
+		ErrorLog:    errorLog,
 		IdleTimeout: time.Minute,
-		Handler:  app.routes(),
-		TLSConfig: tlsConfig,
+		Handler:     app.routes(),
+		TLSConfig:   tlsConfig,
 	}
 
 	infoLog.Printf("Starting server on %s", *addr)
