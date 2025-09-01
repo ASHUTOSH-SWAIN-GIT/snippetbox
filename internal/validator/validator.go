@@ -18,10 +18,15 @@ func Matches(value string, rx *regexp.Regexp) bool {
 
 type Validator struct {
 	FieldErrors map[string]string
+	NonFieldErrors []string
 }
 
 func (v *Validator) Valid() bool {
-	return len(v.FieldErrors) == 0
+	return len(v.FieldErrors) == 0 && len(v.NonFieldErrors) == 0
+}
+
+func (v *Validator) AddNonFieldError(message string){
+	v.NonFieldErrors = append(v.NonFieldErrors , message)
 }
 
 func (v *Validator) AddFieldError(key, message string) {
