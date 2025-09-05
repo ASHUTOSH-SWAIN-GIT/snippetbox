@@ -17,15 +17,14 @@ import (
 	"snippetbox.ashutosh.net/internal/models"
 )
 
-// Add a new sessionManager field to the application struct.
 type application struct {
 	errorLog       *log.Logger
 	infoLog        *log.Logger
-	snippets       *models.SnippetModel
+	snippets       models.SnippetModelInterface
+	users          models.UserModelInterface
 	templateCache  map[string]*template.Template
 	formDecoder    *form.Decoder
 	sessionManager *scs.SessionManager
-	users          *models.UserModel
 }
 
 func main() {
@@ -59,7 +58,7 @@ func main() {
 		templateCache:  templateCache,
 		formDecoder:    formDecoder,
 		sessionManager: sessionManager,
-		users: &models.UserModel{DB:db},
+		users:          &models.UserModel{DB: db},
 	}
 
 	tlsConfig := &tls.Config{
