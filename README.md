@@ -1,3 +1,5 @@
+<img width="1919" height="973" alt="image" src="https://github.com/user-attachments/assets/ad7ed89d-5dd2-46ba-8d06-acb2f58add1f" />
+
 # Snippetbox
 
 A web application for creating and sharing code snippets built with Go and MySQL.
